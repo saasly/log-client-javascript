@@ -4,6 +4,8 @@ import { relative } from "path";
 import saaslyLog from "./saaslyLog";
 import { get as getStackTrace } from "stack-trace";
 
+const os = require("os");
+
 function getTrace() {
   let trace = getStackTrace();
   let final: string[] = [];
@@ -56,6 +58,10 @@ export default function log({
         rootFile: getRootFileName(getRootFilePath()) || "",
         trace: getTrace() || [],
         pid: process.pid || -1,
+        nodeVersion: process.version,
+        NODE_ENV: process.env.NODE_ENV || "",
+        hostname: os.hostname(),
+        os: `${os.type()} ${os.release()}`,
       }),
     },
   });

@@ -5,6 +5,7 @@ const getRootFileName_1 = require("./getRootFileName");
 const path_1 = require("path");
 const saaslyLog_1 = require("./saaslyLog");
 const stack_trace_1 = require("stack-trace");
+const os = require("os");
 function getTrace() {
     let trace = (0, stack_trace_1.get)();
     let final = [];
@@ -33,6 +34,10 @@ function log({ apiKey, source, level, identifier, message, stack, }) {
                 rootFile: (0, getRootFileName_1.default)((0, getRootFilePath_1.default)()) || "",
                 trace: getTrace() || [],
                 pid: process.pid || -1,
+                nodeVersion: process.version,
+                NODE_ENV: process.env.NODE_ENV || "",
+                hostname: os.hostname(),
+                os: `${os.type()} ${os.release()}`,
             }),
         },
     });
