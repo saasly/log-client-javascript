@@ -9,6 +9,6 @@
   "author": "Lukas Liesis",
   "license": "UNLICENSED",
   "dependencies": {
-    "@saasly/logs-client-nodejs": "^0.0.15"
+    "@saasly/logs-client-nodejs": "1.0.3"
   }
 }

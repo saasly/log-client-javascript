@@ -28,7 +28,7 @@ saaslyLogger({apiKey: "YOUR_API_KEY"});
 
 ```
 
-### Options
+### Free cloud logging helper options
 
 | Option       | Required? | Default   | Description                                                                                                                                                                                                                                                                                                                            |
 |--------------|-----------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -41,5 +41,16 @@ saaslyLogger({apiKey: "YOUR_API_KEY"});
 | doTrackInfo  | Optional  | true      | If true, will pipe logs from console.info() to saasly                                                                                                                                                                                                                                                                                  |
 | doTrackDebug | Optional  | true      | If true, will pipe logs from console.debug() to saasly                                                                                                                                                                                                                                                                                 |
 
-
 https://client.saasly.io
+
+### Why use saasly logs?
+
+- **Centralized logging**: All of your logs are stored in one central location, making it easy to search and browse
+  them.
+- **Live logs**: You can see live logs from all of your Node.js applications in real time without having to connect to
+  servers.
+- **Historical logs**: You can also store and browse historical logs, making it easy to troubleshoot problems and track
+  down errors.
+- **Filtering and searching**: Saasly logging services allow you to filter and search your logs by level, source, and
+  other criteria.
+- **FREE** 😍
