@@ -35,13 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
-var axios_1 = __importDefault(require("axios"));
+exports.saaslyLog = void 0;
+var axios_1 = require("axios");
 var axiosRequestInProgress = false;
-function saaslyLog(_a) {
+function _saaslyLog(_a) {
     var apiKey = _a.apiKey, data = _a.data, retryCount = _a.retryCount;
     return __awaiter(this, void 0, void 0, function () {
         var _retryCount, maxRetries, retryDelay, config;
@@ -71,7 +69,7 @@ function saaslyLog(_a) {
                             axiosRequestInProgress = false;
                             if (_retryCount < maxRetries) {
                                 setTimeout(function () {
-                                    saaslyLog({ apiKey: apiKey, data: data, retryCount: _retryCount + 1 });
+                                    _saaslyLog({ apiKey: apiKey, data: data, retryCount: _retryCount + 1 });
                                 }, retryDelay);
                             }
                         })];
@@ -82,7 +80,6 @@ function saaslyLog(_a) {
         });
     });
 }
-exports["default"] = saaslyLog;
 process.on("SIGINT", function () {
     if (axiosRequestInProgress) {
         var timeoutId_1;
@@ -104,3 +101,6 @@ process.on("SIGINT", function () {
         process.exit(0);
     }
 });
+exports["default"] = _saaslyLog;
+exports.saaslyLog = _saaslyLog;
+module.exports = _saaslyLog;

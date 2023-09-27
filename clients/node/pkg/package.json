@@ -1,15 +1,9 @@
 {
   "name": "@saasly/logs-client-nodejs",
-  "version": "0.0.5",
+  "version": "0.0.16",
   "description": "",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/cjs-wrapper.js",
-      "import": "./dist/index.js"
-    }
-  },
   "scripts": {
     "build": "tsc"
   },
