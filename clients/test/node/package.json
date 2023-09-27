@@ -1,0 +1,50 @@
+{
+  "name": "@saasly/logs-client-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saasly/saasly-logs-clients.git"
+  },
+  "keywords": [
+    "logging",
+    "logs",
+    "saasly",
+    "cloud",
+    "logs",
+    "cloud",
+    "logging",
+    "cloud",
+    "console",
+    "cloud",
+    "pm2",
+    "logs",
+    "easy",
+    "logs",
+    "logs",
+    "manager",
+    "logs",
+    "managing",
+    "console",
+    "log"
+  ],
+  "author": "Lukas Liesis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/saasly/saasly-logs-clients/issues"
+  },
+  "homepage": "https://github.com/saasly/saasly-logs-clients#readme",
+  "dependencies": {
+    "axios": "^1.5.0",
+    "stack-trace": "0.0.10",
+    "@faker-js/faker": "8.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.7.0",
+    "@types/stack-trace": "0.0.30"
+  }
+}

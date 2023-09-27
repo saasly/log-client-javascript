@@ -1,0 +1,7 @@
+.idea
+node_modules
+.aws-sam
+.DS_Store
+package-lock.json
+coverage
+yarn.lock
