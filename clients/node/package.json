@@ -1,6 +1,7 @@
 {
-  "name": "@saasly/logs-client-nodejs",
+  "name": "my-app",
   "version": "1.0.0",
+  "private": true,
   "description": "",
   "main": "index.ts",
   "scripts": {
@@ -10,28 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/saasly/saasly-logs-clients.git"
   },
-  "keywords": [
-    "logging",
-    "logs",
-    "saasly",
-    "cloud",
-    "logs",
-    "cloud",
-    "logging",
-    "cloud",
-    "console",
-    "cloud",
-    "pm2",
-    "logs",
-    "easy",
-    "logs",
-    "logs",
-    "manager",
-    "logs",
-    "managing",
-    "console",
-    "log"
-  ],
+  "keywords": [],
   "author": "Lukas Liesis",
   "license": "MIT",
   "bugs": {
