@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+        while (_) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -35,12 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var axios_1 = require("axios");
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+exports.__esModule = true;
+var axios_1 = __importDefault(require("axios"));
+var axiosRequestInProgress = false;
 function saaslyLog(_a) {
     var apiKey = _a.apiKey, data = _a.data, retryCount = _a.retryCount;
     return __awaiter(this, void 0, void 0, function () {
-        var _retryCount, maxRetries, retryDelay, config, response;
+        var _retryCount, maxRetries, retryDelay, config;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -53,32 +57,18 @@ function saaslyLog(_a) {
                         url: "https://api-v3.saasly.io/private/log/insert",
                         headers: {
                             "x-api-key": apiKey,
-                            "Content-Type": "application/json",
+                            "Content-Type": "application/json"
                         },
-                        data: data,
+                        data: data
                     };
-                    return [4 /*yield*/, axios_1.default
+                    // todo batching
+                    axiosRequestInProgress = true;
+                    return [4 /*yield*/, axios_1["default"]
                             .request(config)
-                            .then(function (response) { })
-                            .catch(function (error) {
-                            if (error.response) {
-                                // The request was made and the server responded with a status code
-                                // that falls out of the range of 2xx
-                                // console.error("269101142212 Error status:", error.response.status);
-                                // console.error("269101142218 Error response:", error.response.data);
-                                // console.error(
-                                //   "269101142218 Error response error:",
-                                //   error.response.data?.error,
-                                // );
-                            }
-                            else if (error.request) {
-                                // The request was made but no response was received
-                                // console.error("269101142223 No response received:", error.request);
-                            }
-                            else {
-                                // Something happened in setting up the request that triggered an Error
-                                // console.error("269101142227 Error message:", error.message);
-                            }
+                            .then(function () {
+                            axiosRequestInProgress = false;
+                        })["catch"](function (error) {
+                            axiosRequestInProgress = false;
                             if (_retryCount < maxRetries) {
                                 setTimeout(function () {
                                     saaslyLog({ apiKey: apiKey, data: data, retryCount: _retryCount + 1 });
@@ -86,10 +76,31 @@ function saaslyLog(_a) {
                             }
                         })];
                 case 1:
-                    response = _b.sent();
+                    _b.sent();
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.default = saaslyLog;
+exports["default"] = saaslyLog;
+process.on("SIGINT", function () {
+    if (axiosRequestInProgress) {
+        var timeoutId_1;
+        var intervalId_1;
+        intervalId_1 = setInterval(function () {
+            if (!axiosRequestInProgress) {
+                clearInterval(intervalId_1);
+                clearTimeout(timeoutId_1);
+                process.exit(0);
+            }
+        }, 100);
+        // Set a timeout to force exit after 10 seconds.
+        timeoutId_1 = setTimeout(function () {
+            clearInterval(intervalId_1);
+            process.exit(0);
+        }, 10000);
+    }
+    else {
+        process.exit(0);
+    }
+});

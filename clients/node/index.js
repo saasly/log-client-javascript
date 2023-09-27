@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var pkg_1 = require("./pkg");
+var index_1 = require("./pkg/src/index");
 var faker_1 = require("@faker-js/faker");
 var n = 1;
 (function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -47,8 +47,8 @@ var n = 1;
                     case 0: return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, 1000); })];
                     case 1:
                         _a.sent();
-                        (0, pkg_1.default)({
-                            apiKey: "api-key-pfZ6TEKOSLz2MfaYcsfeB7FjTtOatc9yiFaE9Fy8hDcV7yfkVX1bsJ6ceedEwLpd",
+                        (0, index_1.default)({
+                            apiKey: "YOUR_API_KEY",
                             source: faker_1.faker.database.engine(),
                         });
                         console.log("#269111743207 username: ".concat(faker_1.faker.internet.userName(), " ").concat(n++));

@@ -1,15 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const getRootFilePath_1 = __importDefault(require("./getRootFilePath"));
-const getRootFileName_1 = __importDefault(require("./getRootFileName"));
+const getRootFilePath_1 = require("./getRootFilePath");
+const getRootFileName_1 = require("./getRootFileName");
 const path_1 = require("path");
-const saaslyLog_1 = __importDefault(require("./saaslyLog"));
-const stackTrace = require("stack-trace");
+const saaslyLog_1 = require("./saaslyLog");
+const stack_trace_1 = require("stack-trace");
 function getTrace() {
-    let trace = stackTrace.get();
+    let trace = (0, stack_trace_1.get)();
     let final = [];
     trace.forEach((t) => {
         if (t.isNative() === false &&
@@ -23,7 +20,7 @@ function getTrace() {
     return final;
 }
 function log({ apiKey, source, level, identifier, message, stack, }) {
-    (0, saaslyLog_1.default)({
+    return (0, saaslyLog_1.default)({
         apiKey,
         data: {
             at: new Date().toISOString(),
@@ -31,12 +28,12 @@ function log({ apiKey, source, level, identifier, message, stack, }) {
             level: level || "log",
             identifier: identifier || "",
             log: message || "no message",
-            meta: {
+            meta: JSON.stringify({
                 rootFilePath: (0, getRootFilePath_1.default)() || "",
                 rootFile: (0, getRootFileName_1.default)((0, getRootFilePath_1.default)()) || "",
                 trace: getTrace() || [],
                 pid: process.pid || -1,
-            },
+            }),
         },
     });
 }

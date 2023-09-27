@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 20",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "commonjs",
+    "target": "ES6",
+    "declaration": true,
+    "strict": true
+  },
+  "include": [
+    "src/**/*",
+  ],
+}

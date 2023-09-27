@@ -1,4 +1,4 @@
-import saaslyLogger from "./pkg";
+import saaslyLogger from "./pkg/src/index";
 import { faker } from "@faker-js/faker";
 
 let n = 1;
@@ -7,8 +7,7 @@ let n = 1;
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     saaslyLogger({
-      apiKey:
-        "api-key-pfZ6TEKOSLz2MfaYcsfeB7FjTtOatc9yiFaE9Fy8hDcV7yfkVX1bsJ6ceedEwLpd",
+      apiKey: "YOUR_API_KEY",
       source: faker.database.engine(),
     });
 
@@ -19,5 +18,6 @@ let n = 1;
     console.info(`#27014143832 hi from i ${faker.internet.userName()} ${n++}`);
     await go();
   }
+
   await go();
 })();

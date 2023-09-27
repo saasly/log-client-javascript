@@ -1,10 +1,11 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 function getRootFilePath() {
-    let argv = process?.argv;
+    var argv = process === null || process === void 0 ? void 0 : process.argv;
     if (argv === undefined)
         return "";
-    for (const arg of argv) {
+    for (var _i = 0, argv_1 = argv; _i < argv_1.length; _i++) {
+        var arg = argv_1[_i];
         if (typeof arg !== "string" || arg.startsWith("-")) {
             break;
         }
@@ -14,4 +15,4 @@ function getRootFilePath() {
     }
     return "";
 }
-exports.default = getRootFilePath;
+exports["default"] = getRootFilePath;

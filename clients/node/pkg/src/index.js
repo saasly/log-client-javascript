@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var log_1 = require("./src/log");
+var log_1 = require("./log");
 function saaslyLogger(_a) {
     var apiKey = _a.apiKey, source = _a.source, identifier = _a.identifier, doTrackLog = _a.doTrackLog, doTrackError = _a.doTrackError, doTrackWarn = _a.doTrackWarn, doTrackInfo = _a.doTrackInfo, doTrackDebug = _a.doTrackDebug;
     return __awaiter(this, void 0, void 0, function () {

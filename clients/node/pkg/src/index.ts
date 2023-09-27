@@ -1,4 +1,4 @@
-import log from "./src/log";
+import log from "./log";
 
 export default async function saaslyLogger({
   apiKey,
@@ -105,7 +105,7 @@ export default async function saaslyLogger({
     };
   }
 
-  let exceptionListener = async (err) => {
+  let exceptionListener = async (err: any) => {
     let _identifier = identifier || err.message.match(/(^#\d+)/)?.[0] || "";
 
     await log({
