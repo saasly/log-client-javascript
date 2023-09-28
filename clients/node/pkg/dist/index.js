@@ -22,7 +22,14 @@ function saaslyLogger({ apiKey, source, identifier, doTrackLog, doTrackError, do
         doTrackWarn = typeof doTrackWarn === "boolean" ? doTrackWarn : true;
         doTrackInfo = typeof doTrackInfo === "boolean" ? doTrackInfo : true;
         doTrackDebug = typeof doTrackDebug === "boolean" ? doTrackDebug : true;
-        let getMessage = (args) => args.join(" ").replace(/(\r\n|\r|\n|  )/g, " ");
+        let getMessage = (args) => args
+            .map((x) => {
+            if (typeof x !== "string") {
+                x = JSON.stringify(x);
+            }
+            return x;
+        })
+            .join(" ");
         if (doTrackLog) {
             console.log = function (...args) {
                 var _a;

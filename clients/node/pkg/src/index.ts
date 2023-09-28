@@ -32,7 +32,14 @@ export default async function saaslyLogger({
   doTrackDebug = typeof doTrackDebug === "boolean" ? doTrackDebug : true;
 
   let getMessage = (args: any[]) =>
-    args.join(" ").replace(/(\r\n|\r|\n|  )/g, " ");
+    args
+      .map((x) => {
+        if (typeof x !== "string") {
+          x = JSON.stringify(x);
+        }
+        return x;
+      })
+      .join(" ");
 
   if (doTrackLog) {
     console.log = function (...args: any[]) {

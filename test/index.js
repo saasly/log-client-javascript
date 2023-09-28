@@ -4,7 +4,8 @@ saaslyLogger({
     "api-key-NwcpyBMildAJSt8NkrqZVJ9mFzAoKoanzYPlBLAcrUxGLgP278tTbpGZRsrI20jC",
 });
 
-console.log(`#202327020342747 hi`);
-console.error(`#202327020342747 hi`);
+let obj = {
+  foo: "bar",
+};
 
-console.debug(`#202327020343586 saaslyLogger: `, saaslyLogger);
+console.log(`#202327122326173 `, obj);
