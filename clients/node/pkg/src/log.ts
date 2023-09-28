@@ -49,7 +49,7 @@ export default function log({
     apiKey,
     data: {
       at: new Date().toISOString(),
-      source,
+      source: source || process.env?.PROCESS_NAME || process.env?.NODE_ENV,
       level: level || "log",
       identifier: identifier || "",
       log: message || "no message",

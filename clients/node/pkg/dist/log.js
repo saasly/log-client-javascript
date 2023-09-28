@@ -21,11 +21,12 @@ function getTrace() {
     return final;
 }
 function log({ apiKey, source, level, identifier, message, stack, }) {
+    var _a, _b;
     return (0, saaslyLog_1.default)({
         apiKey,
         data: {
             at: new Date().toISOString(),
-            source,
+            source: source || ((_a = process.env) === null || _a === void 0 ? void 0 : _a.PROCESS_NAME) || ((_b = process.env) === null || _b === void 0 ? void 0 : _b.NODE_ENV),
             level: level || "log",
             identifier: identifier || "",
             log: message || "no message",
