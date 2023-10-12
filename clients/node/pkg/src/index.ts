@@ -35,7 +35,9 @@ export default async function saaslyLogger({
     args
       .map((x) => {
         if (typeof x !== "string") {
-          x = JSON.stringify(x);
+          try {
+            x = JSON.stringify(x);
+          } catch (e) {}
         }
         return x;
       })
@@ -113,22 +115,20 @@ export default async function saaslyLogger({
   }
 
   let exceptionListener = async (err: any) => {
-    let _identifier = identifier || err.message.match(/(^#\d+)/)?.[0] || "";
+    if (err.isHandledBySaaslyLogger !== true) {
+      let _identifier = identifier || err.message.match(/(^#\d+)/)?.[0] || "";
 
-    await log({
-      apiKey,
-      source,
-      identifier: _identifier,
-      level: "error",
-      message: `Uncaught Exception: ${err.message}`,
-      stack: err.stack,
-    });
-    process.removeListener("uncaughtException", exceptionListener);
-    setTimeout(() => {
-      // in case if some other part handled exception and continued the app, which should not be the case but people do things.
-      process.on("uncaughtException", exceptionListener);
-    }, 1);
-    throw err;
+      await log({
+        apiKey,
+        source,
+        identifier: _identifier,
+        level: "error",
+        message: `Uncaught Exception: ${err.message}`,
+        stack: err.stack,
+      });
+      err.isHandledBySaaslyLogger = true;
+      throw err;
+    }
   };
 
   process.on("uncaughtException", exceptionListener);

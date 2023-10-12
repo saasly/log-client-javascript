@@ -25,7 +25,10 @@ function saaslyLogger({ apiKey, source, identifier, doTrackLog, doTrackError, do
         let getMessage = (args) => args
             .map((x) => {
             if (typeof x !== "string") {
-                x = JSON.stringify(x);
+                try {
+                    x = JSON.stringify(x);
+                }
+                catch (e) { }
             }
             return x;
         })
@@ -107,21 +110,19 @@ function saaslyLogger({ apiKey, source, identifier, doTrackLog, doTrackError, do
         }
         let exceptionListener = (err) => __awaiter(this, void 0, void 0, function* () {
             var _a;
-            let _identifier = identifier || ((_a = err.message.match(/(^#\d+)/)) === null || _a === void 0 ? void 0 : _a[0]) || "";
-            yield (0, log_1.default)({
-                apiKey,
-                source,
-                identifier: _identifier,
-                level: "error",
-                message: `Uncaught Exception: ${err.message}`,
-                stack: err.stack,
-            });
-            process.removeListener("uncaughtException", exceptionListener);
-            setTimeout(() => {
-                // in case if some other part handled exception and continued the app, which should not be the case but people do things.
-                process.on("uncaughtException", exceptionListener);
-            }, 1);
-            throw err;
+            if (err.isHandledBySaaslyLogger !== true) {
+                let _identifier = identifier || ((_a = err.message.match(/(^#\d+)/)) === null || _a === void 0 ? void 0 : _a[0]) || "";
+                yield (0, log_1.default)({
+                    apiKey,
+                    source,
+                    identifier: _identifier,
+                    level: "error",
+                    message: `Uncaught Exception: ${err.message}`,
+                    stack: err.stack,
+                });
+                err.isHandledBySaaslyLogger = true;
+                throw err;
+            }
         });
         process.on("uncaughtException", exceptionListener);
     });

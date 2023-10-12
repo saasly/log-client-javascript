@@ -9,3 +9,5 @@ let obj = {
 };
 
 console.log(`#202327122326173 `, obj);
+
+throw new Error("hi world!");
