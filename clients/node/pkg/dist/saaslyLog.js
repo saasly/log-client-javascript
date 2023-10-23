@@ -11,39 +11,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
 let axiosRequestInProgress = false;
-function saaslyLog({ apiKey, data, retryCount, }) {
+let pendingLogs = [];
+let _apiKey = "";
+function pushLogsToApi({ retryCount }) {
     return __awaiter(this, void 0, void 0, function* () {
-        let _retryCount = (retryCount || 0);
-        const maxRetries = 15;
-        const retryDelay = 5000;
-        let config = {
-            method: "post",
-            maxBodyLength: Infinity,
-            url: "https://api-v3.saasly.io/private/log/insert",
-            headers: {
-                "x-api-key": apiKey,
-                "Content-Type": "application/json",
-            },
-            data,
-        };
-        // todo batching
-        axiosRequestInProgress = true;
-        yield axios_1.default
-            .request(config)
-            .then(() => {
-            axiosRequestInProgress = false;
-        })
-            .catch((error) => {
-            axiosRequestInProgress = false;
-            if (_retryCount < maxRetries) {
-                setTimeout(() => {
-                    saaslyLog({ apiKey, data, retryCount: _retryCount + 1 });
-                }, retryDelay);
-            }
-        });
+        if (_apiKey && (pendingLogs === null || pendingLogs === void 0 ? void 0 : pendingLogs[0])) {
+            let sending = pendingLogs.splice(0);
+            let config = {
+                method: "post",
+                maxBodyLength: Infinity,
+                url: "https://api-v3.saasly.io/private/log/insert-batch",
+                headers: {
+                    "x-api-key": _apiKey,
+                    "Content-Type": "application/json",
+                },
+                data: sending,
+            };
+            axiosRequestInProgress = true;
+            yield axios_1.default
+                .request(config)
+                .then(() => {
+                axiosRequestInProgress = false;
+            })
+                .catch((error) => {
+                axiosRequestInProgress = false;
+            });
+        }
+    });
+}
+function saaslyLog({ apiKey, data, }) {
+    return __awaiter(this, void 0, void 0, function* () {
+        _apiKey = apiKey;
+        data.at = data.at || new Date().toISOString();
+        if (data.at.slice(-1) === "Z") {
+            data.at = data.at.slice(0, -1);
+        }
+        pendingLogs.push(data);
     });
 }
 exports.default = saaslyLog;
+setInterval(pushLogsToApi, 2000);
 process.on("SIGINT", () => {
     if (axiosRequestInProgress) {
         let timeoutId;

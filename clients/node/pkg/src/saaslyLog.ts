@@ -2,48 +2,55 @@ import axios from "axios";
 
 let axiosRequestInProgress = false;
 
+let pendingLogs: any[] = [];
+let _apiKey = "";
+
+async function pushLogsToApi({ retryCount }: { retryCount: number }) {
+  if (_apiKey && pendingLogs?.[0]) {
+    let sending: any = pendingLogs.splice(0);
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://api-v3.saasly.io/private/log/insert-batch",
+      headers: {
+        "x-api-key": _apiKey,
+        "Content-Type": "application/json",
+      },
+      data: sending,
+    };
+
+    axiosRequestInProgress = true;
+
+    await axios
+      .request(config)
+      .then(() => {
+        axiosRequestInProgress = false;
+      })
+      .catch((error: any) => {
+        axiosRequestInProgress = false;
+      });
+  }
+}
+
 export default async function saaslyLog({
   apiKey,
   data,
-  retryCount,
 }: {
   apiKey: string;
   data: any;
-  retryCount?: number;
 }) {
-  let _retryCount = (retryCount || 0) as number;
-  const maxRetries = 15;
-  const retryDelay = 5000;
+  _apiKey = apiKey;
+  data.at = data.at || new Date().toISOString();
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://api-v3.saasly.io/private/log/insert",
-    headers: {
-      "x-api-key": apiKey,
-      "Content-Type": "application/json",
-    },
-    data,
-  };
+  if (data.at.slice(-1) === "Z") {
+    data.at = data.at.slice(0, -1);
+  }
 
-  // todo batching
-
-  axiosRequestInProgress = true;
-
-  await axios
-    .request(config)
-    .then(() => {
-      axiosRequestInProgress = false;
-    })
-    .catch((error: any) => {
-      axiosRequestInProgress = false;
-      if (_retryCount < maxRetries) {
-        setTimeout(() => {
-          saaslyLog({ apiKey, data, retryCount: _retryCount + 1 });
-        }, retryDelay);
-      }
-    });
+  pendingLogs.push(data);
 }
+
+setInterval(pushLogsToApi, 2000);
 
 process.on("SIGINT", () => {
   if (axiosRequestInProgress) {

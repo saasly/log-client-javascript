@@ -1,5 +1,4 @@
-export default function saaslyLog({ apiKey, data, retryCount, }: {
+export default function saaslyLog({ apiKey, data, }: {
     apiKey: string;
     data: any;
-    retryCount?: number;
 }): Promise<void>;
