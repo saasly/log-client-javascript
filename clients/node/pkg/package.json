@@ -1,6 +1,6 @@
 {
   "name": "@saasly/logs-client-nodejs",
-  "version": "1.0.12",
+  "version": "1.0.26",
   "description": "",
   "main": "./dist/index.js",
   "types": "dist/index.d.ts",

@@ -10,32 +10,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
-let axiosRequestInProgress = false;
+let axiosRequestInProgress = null;
 let pendingLogs = [];
 let _apiKey = "";
-function pushLogsToApi({ retryCount }) {
+let interval = null;
+function pushLogsToApi() {
     return __awaiter(this, void 0, void 0, function* () {
         if (_apiKey && (pendingLogs === null || pendingLogs === void 0 ? void 0 : pendingLogs[0])) {
             let sending = pendingLogs.splice(0);
             let config = {
                 method: "post",
+                timeout: 30000,
                 maxBodyLength: Infinity,
                 url: "https://api-v3.saasly.io/private/log/insert-batch",
                 headers: {
                     "x-api-key": _apiKey,
                     "Content-Type": "application/json",
                 },
-                data: sending,
+                data: {
+                    logs: sending,
+                },
             };
-            axiosRequestInProgress = true;
-            yield axios_1.default
+            axiosRequestInProgress = axios_1.default
                 .request(config)
-                .then(() => {
-                axiosRequestInProgress = false;
+                .then((_result) => {
+                axiosRequestInProgress = null;
             })
                 .catch((error) => {
-                axiosRequestInProgress = false;
+                axiosRequestInProgress = null;
             });
+        }
+        else {
+            if (interval) {
+                clearInterval(interval);
+            }
         }
     });
 }
@@ -47,28 +55,25 @@ function saaslyLog({ apiKey, data, }) {
             data.at = data.at.slice(0, -1);
         }
         pendingLogs.push(data);
+        if (!interval) {
+            interval = setTimeout(pushLogsToApi, 2000);
+        }
     });
 }
 exports.default = saaslyLog;
-setInterval(pushLogsToApi, 2000);
-process.on("SIGINT", () => {
+process.on("SIGINT", () => __awaiter(void 0, void 0, void 0, function* () {
+    if (interval) {
+        clearInterval(interval);
+    }
+    pushLogsToApi();
     if (axiosRequestInProgress) {
-        let timeoutId;
-        let intervalId;
-        intervalId = setInterval(() => {
-            if (!axiosRequestInProgress) {
-                clearInterval(intervalId);
-                clearTimeout(timeoutId);
-                process.exit(0);
-            }
-        }, 100);
-        // Set a timeout to force exit after 10 seconds.
-        timeoutId = setTimeout(() => {
-            clearInterval(intervalId);
+        let _timeout = setTimeout(() => {
             process.exit(0);
-        }, 10000);
+        }, 3000);
+        yield axiosRequestInProgress;
+        if (_timeout) {
+            clearTimeout(_timeout);
+        }
     }
-    else {
-        process.exit(0);
-    }
-});
+    process.exit(0);
+}));

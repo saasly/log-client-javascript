@@ -20,6 +20,7 @@ function getTrace() {
       }
     }
   });
+
   return final;
 }
 

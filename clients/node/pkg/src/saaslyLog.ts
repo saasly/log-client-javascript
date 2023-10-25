@@ -1,35 +1,41 @@
 import axios from "axios";
 
-let axiosRequestInProgress = false;
+let axiosRequestInProgress: Promise<any> | null = null;
 
 let pendingLogs: any[] = [];
 let _apiKey = "";
+let interval: any = null;
 
-async function pushLogsToApi({ retryCount }: { retryCount: number }) {
+async function pushLogsToApi() {
   if (_apiKey && pendingLogs?.[0]) {
     let sending: any = pendingLogs.splice(0);
 
     let config = {
       method: "post",
+      timeout: 30000,
       maxBodyLength: Infinity,
       url: "https://api-v3.saasly.io/private/log/insert-batch",
       headers: {
         "x-api-key": _apiKey,
         "Content-Type": "application/json",
       },
-      data: sending,
+      data: {
+        logs: sending,
+      },
     };
 
-    axiosRequestInProgress = true;
-
-    await axios
+    axiosRequestInProgress = axios
       .request(config)
-      .then(() => {
-        axiosRequestInProgress = false;
+      .then((_result) => {
+        axiosRequestInProgress = null;
       })
       .catch((error: any) => {
-        axiosRequestInProgress = false;
+        axiosRequestInProgress = null;
       });
+  } else {
+    if (interval) {
+      clearInterval(interval);
+    }
   }
 }
 
@@ -48,29 +54,25 @@ export default async function saaslyLog({
   }
 
   pendingLogs.push(data);
+  if (!interval) {
+    interval = setTimeout(pushLogsToApi, 2000);
+  }
 }
 
-setInterval(pushLogsToApi, 2000);
-
-process.on("SIGINT", () => {
-  if (axiosRequestInProgress) {
-    let timeoutId: any;
-    let intervalId: any;
-
-    intervalId = setInterval(() => {
-      if (!axiosRequestInProgress) {
-        clearInterval(intervalId);
-        clearTimeout(timeoutId);
-        process.exit(0);
-      }
-    }, 100);
-
-    // Set a timeout to force exit after 10 seconds.
-    timeoutId = setTimeout(() => {
-      clearInterval(intervalId);
-      process.exit(0);
-    }, 10000);
-  } else {
-    process.exit(0);
+process.on("SIGINT", async () => {
+  if (interval) {
+    clearInterval(interval);
   }
+  pushLogsToApi();
+  if (axiosRequestInProgress) {
+    let _timeout = setTimeout(() => {
+      process.exit(0);
+    }, 3000);
+    await axiosRequestInProgress;
+    if (_timeout) {
+      clearTimeout(_timeout);
+    }
+  }
+
+  process.exit(0);
 });
