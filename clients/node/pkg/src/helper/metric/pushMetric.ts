@@ -2,25 +2,25 @@ import axios from "axios";
 
 let axiosRequestInProgress: Promise<any> | null = null;
 
-let pendingLogs: any[] = [];
+let pendingMetrics: any[] = [];
 let _apiKey = "";
 let interval: any = null;
 
-async function pushLogsToApi() {
-  if (_apiKey && pendingLogs?.[0]) {
-    let sending: any = pendingLogs.splice(0);
+async function pushMetricsToApi() {
+  if (_apiKey && pendingMetrics?.[0]) {
+    let sending: any = pendingMetrics.splice(0);
 
     let config = {
       method: "post",
       timeout: 30000,
       maxBodyLength: Infinity,
-      url: "https://api-v3.saasly.io/private/log/insert-batch",
+      url: "https://api-v3.saasly.io/private/metric/insert-batch",
       headers: {
         "x-api-key": _apiKey,
         "Content-Type": "application/json",
       },
       data: {
-        logs: sending,
+        metrics: sending,
       },
     };
 
@@ -39,12 +39,17 @@ async function pushLogsToApi() {
   }
 }
 
-export default async function saaslyLog({
+export default function pushMetric({
   apiKey,
   data,
 }: {
   apiKey: string;
-  data: any;
+  data: {
+    source: string;
+    variable: string;
+    value: number;
+    at?: string;
+  };
 }) {
   _apiKey = apiKey;
   data.at = data.at || new Date().toISOString();
@@ -53,9 +58,9 @@ export default async function saaslyLog({
     data.at = data.at.slice(0, -1);
   }
 
-  pendingLogs.push(data);
+  pendingMetrics.push(data);
   if (!interval) {
-    interval = setTimeout(pushLogsToApi, 2000);
+    interval = setTimeout(pushMetricsToApi, 2000);
   }
 }
 
@@ -63,7 +68,7 @@ process.on("SIGINT", async () => {
   if (interval) {
     clearInterval(interval);
   }
-  pushLogsToApi();
+  pushMetricsToApi();
   if (axiosRequestInProgress) {
     let _timeout = setTimeout(() => {
       process.exit(0);

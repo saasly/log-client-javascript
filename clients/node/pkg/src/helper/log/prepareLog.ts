@@ -1,7 +1,7 @@
-import getRootFilePath from "./getRootFilePath";
-import getRootFileName from "./getRootFileName";
+import getRootFilePath from "../getRootFilePath";
+import getRootFileName from "../getRootFileName";
 import { relative } from "path";
-import saaslyLog from "./saaslyLog";
+import pushLog from "./pushLog";
 import { get as getStackTrace } from "stack-trace";
 
 const os = require("os");
@@ -15,7 +15,7 @@ function getTrace() {
       t.isConstructor() === false &&
       t.getFileName() !== __filename
     ) {
-      if (relative(__filename, t.getFileName()) !== "../index.js") {
+      if (relative(__filename, t.getFileName()) !== "../../../index.js") {
         final.push(t.toString());
       }
     }
@@ -24,7 +24,7 @@ function getTrace() {
   return final;
 }
 
-export default function log({
+export default function prepareLog({
   apiKey,
   source,
   level,
@@ -46,7 +46,7 @@ export default function log({
   message?: string;
   stack?: string;
 }) {
-  return saaslyLog({
+  return pushLog({
     apiKey,
     data: {
       at: new Date().toISOString(),
